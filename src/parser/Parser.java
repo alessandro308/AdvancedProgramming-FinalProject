@@ -227,6 +227,7 @@ public class Parser {
         //p.printToken();
         p.parseGraph();
         System.out.println(p.g.isDAG());
+        System.out.println(p.g.isValid());
     }
 
 }

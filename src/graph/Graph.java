@@ -78,10 +78,15 @@ public class Graph {
         for(Node n : nodes){
             if(!n.isInitial()){
                 for(Input input : n.getInputs()){
-                    if(getNode(input.id) == null)
+                    if(input.getType() == 0 && getNode(input.id) == null)
                         return false;
                 }
             }
+        }
+        try{
+            computingShape(sink());
+        }catch (ShapeCompatibilityException e){
+            return false;
         }
         return true;
     }
@@ -95,34 +100,32 @@ public class Graph {
     Shape computingShape(Node n) throws ShapeCompatibilityException{
         // Compute shape recursively.
         // return null on failure
-        if(n.isInitial()){
+        if(n.isInitial())
             return n.getShape();
-        } else {
-            if(n.getShape() != null)
-                return n.getShape(); //The shape was already computed
-            Vector<Input> inputs = n.getInputs();
-            switch (n.getOp()){
-                case "sum":
-                    Shape referenceShape = computingShape(getNode(inputs.get(0).id));
-                    for(int i = 1; i<inputs.size(); i++){
-                        Input input = inputs.get(i);
-                        if(!referenceShape.equals(computingShape(getNode(input.id))))
-                            throw new ShapeCompatibilityException();
-                    }
-                    n.setShape(referenceShape); //Equal to components
-                    break;
-                case "mul":
-                    Shape res = computingShape(getNode(inputs.get(0).id));
-                    for(int i = 1; i<inputs.size(); i++){
-                        Shape nextShape = computingShape(getNode(inputs.get(i).id));
-                        if((res = mulShape(res, nextShape)) == null)
-                            throw new ShapeCompatibilityException();
-                    }
-                    n.setShape(res);
-                    break;
-            }
-
+        if(n.getShape() != null)
+            return n.getShape(); //The shape was already computed
+        Vector<Input> inputs = n.getInputs();
+        switch (n.getOp()){
+            case "sum":
+                Shape referenceShape = computingShape(getNode(inputs.get(0).id));
+                for(int i = 1; i<inputs.size(); i++){
+                    Input input = inputs.get(i);
+                    if(!referenceShape.equals(computingShape(getNode(input.id))))
+                        throw new ShapeCompatibilityException();
+                }
+                n.setShape(referenceShape); //Equal to components
+                break;
+            case "mul":
+                Shape res = computingShape(getNode(inputs.get(0).id));
+                for(int i = 1; i<inputs.size(); i++){
+                    Shape nextShape = computingShape(getNode(inputs.get(i).id));
+                    if((res = mulShape(res, nextShape)) == null)
+                        throw new ShapeCompatibilityException();
+                }
+                n.setShape(res);
+                break;
         }
+        return n.getShape();
 
     }
 

@@ -4,7 +4,6 @@
     <list default="true" id="a6c7345c-2c2c-460b-b51f-a04471abbd3c" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/README.md" afterPath="$PROJECT_DIR$/README.md" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/compiler/Generator.java" afterPath="$PROJECT_DIR$/src/compiler/Generator.java" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/src/compiler/Parser.java" afterPath="$PROJECT_DIR$/src/compiler/Parser.java" />
     </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -25,8 +24,8 @@
       <file leaf-file-name="Parser.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/compiler/Parser.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="183" selection-end-column="5" />
+            <state relative-caret-position="225">
+              <caret line="15" column="32" lean-forward="true" selection-start-line="15" selection-start-column="32" selection-end-line="15" selection-end-column="32" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -37,8 +36,8 @@
       <file leaf-file-name="Generator.java" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/compiler/Generator.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="451">
-              <caret line="148" column="55" lean-forward="false" selection-start-line="148" selection-start-column="55" selection-end-line="148" selection-end-column="55" />
+            <state relative-caret-position="-380">
+              <caret line="99" column="48" lean-forward="true" selection-start-line="99" selection-start-column="48" selection-end-line="99" selection-end-column="48" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#252#253#0" expanded="true" />
@@ -183,8 +182,8 @@
         <option value="$PROJECT_DIR$/src/compiler/exception/NotADAGException.java" />
         <option value="$PROJECT_DIR$/src/graph/Graph.java" />
         <option value="$PROJECT_DIR$/src/compiler/exception/GeneratedClass.java" />
-        <option value="$PROJECT_DIR$/src/compiler/Generator.java" />
         <option value="$PROJECT_DIR$/src/compiler/Parser.java" />
+        <option value="$PROJECT_DIR$/src/compiler/Generator.java" />
       </list>
     </option>
   </component>
@@ -747,12 +746,12 @@
       <workItem from="1496909485568" duration="16538000" />
       <workItem from="1496939993931" duration="9626000" />
       <workItem from="1496993002370" duration="964000" />
-      <workItem from="1497017685358" duration="12002000" />
+      <workItem from="1497017685358" duration="12856000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="43517000" />
+    <option name="totallyTimeSpent" value="44371000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="23" width="1440" height="873" extended-state="6" />
@@ -1194,8 +1193,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/compiler/Generator.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="451">
-          <caret line="148" column="55" lean-forward="false" selection-start-line="148" selection-start-column="55" selection-end-line="148" selection-end-column="55" />
+        <state relative-caret-position="-380">
+          <caret line="99" column="48" lean-forward="true" selection-start-line="99" selection-start-column="48" selection-end-line="99" selection-end-column="48" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#252#253#0" expanded="true" />
@@ -1208,8 +1207,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/compiler/Parser.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="183" selection-end-column="5" />
+        <state relative-caret-position="225">
+          <caret line="15" column="32" lean-forward="true" selection-start-line="15" selection-start-column="32" selection-end-line="15" selection-end-column="32" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>

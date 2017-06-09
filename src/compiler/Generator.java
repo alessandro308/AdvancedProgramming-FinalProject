@@ -38,7 +38,7 @@ public class Generator
         Vector<String> vars = new Vector<>();
         StringBuilder toWrite = new StringBuilder();
         String sumFunction = "double[][] sum(double[][]... x){\n" +
-                "        if(x.length == 0)\n" +
+                "      if(x.length == 0)\n" +
                 "            return new double[0][0];\n" +
                 "        double[][] res = new double[x[0].length][x[0][0].length];\n" +
                 "        for(int i = 0; i<x.length; i++) {\n" +

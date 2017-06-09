@@ -1,5 +1,6 @@
 package graph;
 
+import compiler.exception.NotADAGException;
 import graph.exception.NodeAlreadyExistsException;
 import graph.exception.ShapeCompatibilityException;
 
@@ -60,7 +61,7 @@ public class Graph {
 
         return res.size() == 0 ? null : res;
     }
-    public boolean isDAG(){
+    public Vector<String> getOrderNodes(){
         System.out.println(this.getNode("d").getInputs().get(1).shape.r);
         /* Kahn's algorithm // https://en.wikipedia.org/wiki/Topological_sorting */
         Vector<String> L = new Vector<>();
@@ -82,7 +83,22 @@ public class Graph {
                     }
                 }
         }
-        return edges2.size() <= 0;
+        return edges2.size() <= 0 ? L : null;
+    }
+
+    public Vector<Node> orderNodes() throws NotADAGException{ //Edit nodes with results of Kahn's algorithm
+        Vector<String> orderedNodesID = getOrderNodes();
+        if(orderedNodesID == null || this.nodes.size() != orderedNodesID.size())
+            throw new NotADAGException();
+        Vector<Node> orderedNode = new Vector<>();
+        for(String s : orderedNodesID)
+            orderedNode.add(this.getNode(s));
+        this.nodes = orderedNode;
+        return this.nodes;
+    }
+
+    public boolean isDAG(){
+        return getOrderNodes() != null;
     }
 
     // --------ISVALID handlers-----
@@ -173,7 +189,7 @@ public class Graph {
         }
     }
 
-    private Vector<Node> sink(){
+    public Vector<Node> sink(){
         //returns first sink found
         Vector<Node> nodes = (Vector<Node>) this.nodes.clone();
         for(Node no : this.nodes){

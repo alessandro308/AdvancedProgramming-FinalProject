@@ -4,7 +4,7 @@ import java.util.Vector;
 
 public class Input {
     private Vector<Vector<Double>> matrix = new Vector<>();
-    String id;
+    public String id;
     Shape shape;
     private int type; // 0: id, 1: matrix
     public Input(String id){
@@ -16,7 +16,10 @@ public class Input {
         shape = new Shape(m.size(), m.get(0).size());
         this.type = 1;
     }
-    int getType(){
+    public int getType(){
         return type;
+    }
+    public Vector<Vector<Double>> matrix(){
+        return (Vector<Vector<Double>>) matrix.clone();
     }
 }

@@ -1,23 +1,13 @@
 package compiler;
-
-import graph.Graph;
-import graph.Input;
-import graph.Node;
-import graph.Shape;
+import graph.*;
 import compiler.exception.*;
-
 import java.io.*;
 import java.util.Vector;
 
-/**
- * Implement a recursive descent compiler, which takes a JSON representation of a graph and builds the corresponding graph.
- */
 public class Parser {
     private String toParse;
     private StreamTokenizer input;
     private Graph g = new Graph();
-
-
     public Parser(String toParse){
         this.toParse = toParse;
         input = new StreamTokenizer(new StringReader(toParse));
@@ -35,38 +25,20 @@ public class Parser {
         input.eolIsSignificant(false);
     }
 
-
-    public void printToken() throws Exception{
-        int i = 0;
-        while((i = input.nextToken()) != StreamTokenizer.TT_EOF){
-            switch (i){
-                case StreamTokenizer.TT_WORD:
-                    System.out.println(input.sval); break;
-                case StreamTokenizer.TT_NUMBER:
-                    System.out.println(input.nval); break;
-                default:
-                    System.out.println((char)input.ttype);
-
-            }
-        }
-    }
-
     private void expect(char c) throws UnexpectedTokenException{
         try{
             input.nextToken();
             if(input.ttype != c)
-                throw new UnexpectedTokenException("Expected Token "+c+" on line "+input.lineno() + " - Found "+(char)input.ttype);
+                throw new UnexpectedTokenException("Expected Token "+c+" - Found "+(char)input.ttype);
         }catch (IOException e){
             throw new ParseFailed(e.getMessage());
         }
     }
-
     private void expect(int type) throws ParseFailed, IOException{
             int i = input.nextToken();
             if(i != type)
                 throw new ParseFailed("expect error - Failed Parsing on type "+ type + " on line "+input.lineno()+ ". Found "+i);
     }
-
     private Shape readShape() throws IOException, UnexpectedTokenException{
         Shape shape = new Shape();
         expect('[');
@@ -86,7 +58,6 @@ public class Parser {
         expect('"');
         return type;
     }
-
     private String readWord() throws IOException, UnexpectedTokenException {
         expect('"');
         expect(StreamTokenizer.TT_WORD);
@@ -112,7 +83,6 @@ public class Parser {
                 throw new UnexpectedTokenException("Read Matrix Error - Found "+input.ttype);
             matrix.add(row);
         }while (input.ttype != ']');
-
         int col = matrix.get(0).size();
         for(int i = 1; i<matrix.size(); i++){
             if(matrix.get(i).size() != col)
@@ -169,23 +139,19 @@ public class Parser {
                     case "type":
                         expect('"');
                         expect(':');
-                        type = readType();
-                        break;
+                        type = readType(); break;
                     case "shape":
                         expect('"');
                         expect(':');
-                        shape = readShape();
-                        break;
+                        shape = readShape(); break;
                     case "in":
                         expect('"');
                         expect(':');
-                        in = readIn();
-                        break;
+                        in = readIn(); break;
                     case "op":
                         expect('"');
                         expect(':');
-                        op = readWord();
-                        break;
+                        op = readWord(); break;
                     default:
                         throw new ParseFailed("Unexpected Token " + input.sval);
                 }
@@ -218,49 +184,7 @@ public class Parser {
     }
 
     public static void main(String args[]) throws Exception {
-        String mg = "{ \"a\": {\"type\": \"input\", \"shape\": [1,1]},\n" +
-                "\"b\": {\"type\": \"input\", \"shape\": [1,1]},\n" +
-                "\"c\": {\"type\": \"comp\", \"op\": \"sum\", \"in\": [\"a\", \"b\"]}, \"d\": {\"type\":\n"+
-                "\"comp\", \"op\": \"sum\", \"in\": [\"b\", \n[[\n1]]]\n}, \"e\": {\"type\": \"comp\", \"op\": \"mult\", \"in\": \n[\"c\", \"d\"]}\n" +
-                "}";
-        String mg2 = "{\n" +
-                "  \"a\": {\n" +
-                "    \"type\": \"input\",\n" +
-                "    \"shape\": [\n" +
-                "      2,\n" +
-                "      1\n" +
-                "    ]\n" +
-                "  },\n" +
-                "  \"b\": {\n" +
-                "    \"type\": \"input\",\n" +
-                "    \"shape\": [\n" +
-                "      2,\n" +
-                "      1\n" +
-                "    ]\n" +
-                "  },\n" +
-                "  \"c\": {\n" +
-                "    \"type\": \"comp\",\n" +
-                "    \"op\": \"sum\",\n" +
-                "    \"in\": [\n" +
-                "      \"a\",\n" +
-                "      \"b\"\n" +
-                "    ]\n" +
-                "  },\n" +
-                "  \"d\": {\n" +
-                "    \"type\": \"comp\",\n" +
-                "    \"op\": \"mul\",\n" +
-                "    \"in\": [\n" +
-                "      \"b\",\n" +
-                "      [\n" +
-                "        [\n" +
-                "          1,\n" +
-                "          2\n" +
-                "        ]\n" +
-                "      ]\n" +
-                "    ]\n" +
-                "  }\n" +
-                "};";
-
+        String mg = "{ \"a\": {\"type\": \"input\", \"shape\": [1,1]},\n\"b\": {\"type\": \"input\", \"shape\": [1,1]},\n\"c\": {\"type\": \"comp\", \"op\": \"sum\", \"in\": [\"a\", \"b\"]}, \"d\": {\"type\":\n\"comp\", \"op\": \"sum\", \"in\": [\"b\", \n[[\n1]]]\n}, \"e\": {\"type\": \"comp\", \"op\": \"mult\", \"in\": \n[\"c\", \"d\"]}\n}";
         Parser p = new Parser(mg);
         //p.printToken();
         p.parseGraph();

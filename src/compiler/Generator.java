@@ -3,9 +3,6 @@ import compiler.exception.NotADAGException;
 import graph.Graph;
 import graph.Input;
 import graph.Node;
-import graph.Shape;
-import graph.exception.ShapeCompatibilityException;
-
 import java.io.*;
 import java.util.Vector;
 
@@ -150,6 +147,5 @@ public class Generator
         }
         toWrite.append("\treturn res;\n}}");
         this.file.write(toWrite.toString().getBytes());
-
     }
 }

@@ -24,6 +24,17 @@ public class Graph {
         });
         nodes.add(n);
     }
+    public Vector<Node> getNodes(){
+        return (Vector<Node>) nodes.clone();
+    }
+    public Vector<Node> getInitial(){
+        Vector<Node> init = new Vector<>();
+        for(Node n : nodes){
+            if(n.isInitial())
+                init.add(n);
+        }
+        return init;
+    }
 
     //------------------ISDAG() HANDLERS------------------
     private Vector<Edge> filterEdge(Vector<Edge> edges, String start, String end){
@@ -50,6 +61,7 @@ public class Graph {
         return res.size() == 0 ? null : res;
     }
     public boolean isDAG(){
+        System.out.println(this.getNode("d").getInputs().get(1).shape.r);
         /* Kahn's algorithm // https://en.wikipedia.org/wiki/Topological_sorting */
         Vector<String> L = new Vector<>();
         Vector<String> S = new Vector<>();
@@ -73,33 +85,19 @@ public class Graph {
         return edges2.size() <= 0;
     }
 
-
-    public boolean isValid(){
-        for(Node n : nodes){
-            if(!n.isInitial()){
-                for(Input input : n.getInputs()){
-                    if(input.getType() == 0 && getNode(input.id) == null)
-                        return false;
-                }
-            }
-        }
-        try{
-            computingShape(sink());
-        }catch (ShapeCompatibilityException e){
-            return false;
-        }
-        return true;
-    }
-
+    // --------ISVALID handlers-----
     private Shape mulShape(Shape s1, Shape s2){
         if(s1.c == s2.r){
             return new Shape(s1.r, s2.c);
         }
         return null;
     }
-    Shape computingShape(Node n) throws ShapeCompatibilityException{
+    Shape computingShape(Input in) throws ShapeCompatibilityException{
         // Compute shape recursively.
         // return null on failure
+        if(in.getType()==1)
+            return in.shape;
+        Node n = getNode(in.id);
         if(n.isInitial())
             return n.getShape();
         if(n.getShape() != null)
@@ -107,20 +105,24 @@ public class Graph {
         Vector<Input> inputs = n.getInputs();
         switch (n.getOp()){
             case "sum":
-                Shape referenceShape = computingShape(getNode(inputs.get(0).id));
+                Shape referenceShape = computingShape(inputs.get(0));
                 for(int i = 1; i<inputs.size(); i++){
                     Input input = inputs.get(i);
-                    if(!referenceShape.equals(computingShape(getNode(input.id))))
+                    if(!referenceShape.equals(computingShape(input))) {
+                        System.out.println("SHAPE ERROR "+n.getId());
                         throw new ShapeCompatibilityException();
+                    }
                 }
                 n.setShape(referenceShape); //Equal to components
                 break;
-            case "mul":
-                Shape res = computingShape(getNode(inputs.get(0).id));
+            case "mult":
+                Shape res = computingShape(inputs.get(0));
                 for(int i = 1; i<inputs.size(); i++){
-                    Shape nextShape = computingShape(getNode(inputs.get(i).id));
-                    if((res = mulShape(res, nextShape)) == null)
+                    Shape nextShape = computingShape(inputs.get(i));
+                    if((res = mulShape(res, nextShape)) == null) {
+                        System.out.println("SHAPE ERROR2 " + n.getOp());
                         throw new ShapeCompatibilityException();
+                    }
                 }
                 n.setShape(res);
                 break;
@@ -128,6 +130,29 @@ public class Graph {
         return n.getShape();
 
     }
+
+    public boolean isValid(){
+        for(Node n : nodes){
+            if(!n.isInitial()){
+                for(Input input : n.getInputs()){
+                    if(input.getType() == 0 && getNode(input.id) == null) {
+                        System.out.println("Node " + input.id + " not exists");
+                        return false;
+                    }
+                }
+            }
+        }
+        try{
+            for(Node n: sink()){
+                computingShape(new Input(n.getId()));
+            }
+        }catch (ShapeCompatibilityException e){
+            System.out.println("Invalid shape");
+            return false;
+        }
+        return true;
+    }
+
 
     Node getNode(String id){
         for(Node n : nodes){
@@ -148,7 +173,7 @@ public class Graph {
         }
     }
 
-    private Node sink(){
+    private Vector<Node> sink(){
         //returns first sink found
         Vector<Node> nodes = (Vector<Node>) this.nodes.clone();
         for(Node no : this.nodes){
@@ -158,6 +183,7 @@ public class Graph {
                 }
             }
         }
-        return nodes.size() == 0 ? null : nodes.firstElement();
+        return nodes.size() == 0 ? null : nodes;
     }
+
 }

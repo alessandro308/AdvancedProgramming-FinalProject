@@ -1,7 +1,7 @@
-package parser.exception;
+package compiler.exception;
 
 /**
- * Exception used in parser class
+ * Exception used in compiler class
  */
 public class ParseFailed extends RuntimeException{
     public ParseFailed(String message){

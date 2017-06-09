@@ -18,5 +18,8 @@ public class Shape {
                     ((Shape) other).c == this.c;
     }
 
+    public int size(){
+        return r*c;
+    }
 
 }

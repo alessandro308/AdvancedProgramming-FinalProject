@@ -24,22 +24,22 @@ public class Node {
         this.op = op;
         this.inputs = inputs;
     }
-    String getId(){
+    public String getId(){
         return this.id;
     }
 
-    boolean isInitial(){
+    public boolean isInitial(){
         return this.isInitial;
     }
 
-    Vector<Input> getInputs(){
+    public Vector<Input> getInputs(){
         return this.inputs;
     }
 
-    String getOp(){
+    public String getOp(){
         return this.op;
     }
-    Shape getShape(){
+    public Shape getShape(){
         return this.shape;
     }
     void setShape(Shape newShape){

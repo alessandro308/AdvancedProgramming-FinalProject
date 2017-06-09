@@ -1,16 +1,16 @@
-package parser;
+package compiler;
 
 import graph.Graph;
 import graph.Input;
 import graph.Node;
 import graph.Shape;
-import parser.exception.*;
+import compiler.exception.*;
 
 import java.io.*;
 import java.util.Vector;
 
 /**
- * Implement a recursive descent parser, which takes a JSON representation of a graph and builds the corresponding graph.
+ * Implement a recursive descent compiler, which takes a JSON representation of a graph and builds the corresponding graph.
  */
 public class Parser {
     private String toParse;
@@ -223,11 +223,52 @@ public class Parser {
                 "\"c\": {\"type\": \"comp\", \"op\": \"sum\", \"in\": [\"a\", \"b\"]}, \"d\": {\"type\":\n"+
                 "\"comp\", \"op\": \"sum\", \"in\": [\"b\", \n[[\n1]]]\n}, \"e\": {\"type\": \"comp\", \"op\": \"mult\", \"in\": \n[\"c\", \"d\"]}\n" +
                 "}";
-        Parser p = new Parser(mg);
+        String mg2 = "{\n" +
+                "  \"a\": {\n" +
+                "    \"type\": \"input\",\n" +
+                "    \"shape\": [\n" +
+                "      2,\n" +
+                "      1\n" +
+                "    ]\n" +
+                "  },\n" +
+                "  \"b\": {\n" +
+                "    \"type\": \"input\",\n" +
+                "    \"shape\": [\n" +
+                "      2,\n" +
+                "      1\n" +
+                "    ]\n" +
+                "  },\n" +
+                "  \"c\": {\n" +
+                "    \"type\": \"comp\",\n" +
+                "    \"op\": \"sum\",\n" +
+                "    \"in\": [\n" +
+                "      \"a\",\n" +
+                "      \"b\"\n" +
+                "    ]\n" +
+                "  },\n" +
+                "  \"d\": {\n" +
+                "    \"type\": \"comp\",\n" +
+                "    \"op\": \"mul\",\n" +
+                "    \"in\": [\n" +
+                "      \"b\",\n" +
+                "      [\n" +
+                "        [\n" +
+                "          1,\n" +
+                "          2\n" +
+                "        ]\n" +
+                "      ]\n" +
+                "    ]\n" +
+                "  }\n" +
+                "};";
+
+        Parser p = new Parser(mg2);
         //p.printToken();
         p.parseGraph();
         System.out.println(p.g.isDAG());
         System.out.println(p.g.isValid());
+
+        Generator print = new Generator();
+        print.generateCode(p.g);
     }
 
 }

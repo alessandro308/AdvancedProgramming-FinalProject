@@ -33,6 +33,7 @@ public class Generator
         }
     }
 
+
     public void generateCode(Graph g) throws IOException, NotADAGException {
         g.orderNodes();
         Vector<String> vars = new Vector<>();
@@ -81,11 +82,9 @@ public class Generator
                 "        return res;\n" +
                 "}\n";
         String classHeader = "import java.util.Vector;\npublic class MainClass{\n";
-        //String mainHeader = "public static void main(String[] args){\n";
         file.write(classHeader.getBytes());
         file.write(sumFunction.getBytes());
         file.write(mulFunction.getBytes());
-        //file.write(mainHeader.getBytes());
 
         for(Node n : g.getInitial()){
             for(int i = 0; i<n.getShape().size(); i++){
@@ -114,6 +113,12 @@ public class Generator
         Vector<Node> notInitial = g.getNodes();
         notInitial.removeAll(g.getInitial());
         for(Node n : notInitial){
+            if(n.getOp().equals("sum")){
+                for(Input in : n.getInputs()){
+
+                }
+            }
+            /*
             toWrite.append("\tdouble[][] ").append(n.getId()).append(" = ");
             toWrite.append(n.getOp()+"( ");
             for(int t = 0; t<n.getInputs().size(); t++){
@@ -139,7 +144,7 @@ public class Generator
                 if(t < n.getInputs().size()-1) toWrite.append(", ");
 
             }
-            toWrite.append(");\n");
+            toWrite.append(");\n");*/
         }
         toWrite.append("\tVector<double[][]>  res = new Vector<>();\n");
         for(Node n : g.sink()){

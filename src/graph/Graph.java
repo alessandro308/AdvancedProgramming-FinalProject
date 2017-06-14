@@ -78,9 +78,8 @@ public class Graph {
             if(filteredEdge != null)
                 for(Edge e : filteredEdge){
                     edges2.remove(e);
-                    if(filterEdge(edges2, null, e.end) == null){
+                    if(filterEdge(edges2, null, e.end) == null)
                         S.add(e.end);
-                    }
                 }
         }
         return edges2.size() <= 0 ? L : null;
@@ -119,32 +118,25 @@ public class Graph {
         if(n.getShape() != null)
             return n.getShape(); //The shape was already computed
         Vector<Input> inputs = n.getInputs();
+        Shape res = computingShape(inputs.get(0));
         switch (n.getOp()){
             case "sum":
-                Shape referenceShape = computingShape(inputs.get(0));
                 for(int i = 1; i<inputs.size(); i++){
                     Input input = inputs.get(i);
-                    if(!referenceShape.equals(computingShape(input))) {
-                        System.out.println("SHAPE ERROR "+n.getId());
+                    if(!res.equals(computingShape(input)))
                         throw new ShapeCompatibilityException();
-                    }
                 }
-                n.setShape(referenceShape); //Equal to components
+                n.setShape(res); //Equal to components
                 break;
             case "mult":
-                Shape res = computingShape(inputs.get(0));
                 for(int i = 1; i<inputs.size(); i++){
-                    Shape nextShape = computingShape(inputs.get(i));
-                    if((res = mulShape(res, nextShape)) == null) {
-                        System.out.println("SHAPE ERROR2 " + n.getOp());
+                    if((res = mulShape(res, computingShape(inputs.get(i)))) == null)
                         throw new ShapeCompatibilityException();
-                    }
                 }
                 n.setShape(res);
                 break;
         }
         return n.getShape();
-
     }
 
     public boolean isValid(){
@@ -170,7 +162,7 @@ public class Graph {
     }
 
 
-    Node getNode(String id){
+    public Node getNode(String id){
         for(Node n : nodes){
             if(n.getId().equals(id))
                 return n;

@@ -6,7 +6,6 @@ package graph;
 public class Shape {
     public int r;
     public int c;
-    public Shape(){};
     public Shape(int r, int c){
         this.r = r;
         this.c = c;

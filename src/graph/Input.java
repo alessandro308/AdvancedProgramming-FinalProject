@@ -22,4 +22,6 @@ public class Input {
     public Vector<Vector<Double>> matrix(){
         return (Vector<Vector<Double>>) matrix.clone();
     }
+    public Shape getShape(){ return shape; }
+    public void  setShape(Shape newShape){ this.shape = newShape; }
 }

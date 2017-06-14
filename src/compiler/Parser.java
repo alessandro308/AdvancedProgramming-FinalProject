@@ -40,15 +40,14 @@ public class Parser {
                 throw new ParseFailed("expect error - Failed Parsing on type "+ type + " on line "+input.lineno()+ ". Found "+i);
     }
     private Shape readShape() throws IOException, UnexpectedTokenException{
-        Shape shape = new Shape();
         expect('[');
         expect(StreamTokenizer.TT_NUMBER);
-        shape.r = (int) input.nval;
+        int r = (int) input.nval;
         expect(',');
         expect(StreamTokenizer.TT_NUMBER);
-        shape.c = (int) input.nval;
+        int c = (int) input.nval;
         expect(']');
-        return shape;
+        return new Shape(r, c);
     }
     private int readType() throws IOException, UnexpectedTokenException{
         /* 0 = input, 1 = intermediate */
@@ -121,9 +120,9 @@ public class Parser {
     private void parseNode(){
         String id = null;
         int type = -1;
-        Shape shape = new Shape();
         Vector<Input> in = new Vector<>();
         String op = null;
+        Shape shape = null;
         try{
             id = readWord();
             expect(':');
@@ -184,14 +183,26 @@ public class Parser {
     }
 
     public static void main(String args[]) throws Exception {
-        String mg = "{ \"a\": {\"type\": \"input\", \"shape\": [1,1]},\n\"b\": {\"type\": \"input\", \"shape\": [1,1]},\n\"c\": {\"type\": \"comp\", \"op\": \"sum\", \"in\": [\"a\", \"b\"]}, \"d\": {\"type\":\n\"comp\", \"op\": \"sum\", \"in\": [\"b\", \n[[\n1]]]\n}, \"e\": {\"type\": \"comp\", \"op\": \"mult\", \"in\": \n[\"c\", \"d\"]}\n}";
+        String mg1 = "{ \"a\": {\"type\": \"input\", \"shape\": [1,1]},\n\"b\": {\"type\": \"input\", \"shape\": [1,1]},\n\"c\": {\"type\": \"comp\", \"op\": \"sum\", \"in\": [\"a\", \"b\"]}, \"d\": {\"type\":\n\"comp\", \"op\": \"sum\", \"in\": [\"b\", \n[[\n1]]]\n}, \"e\": {\"type\": \"comp\", \"op\": \"mult\", \"in\": \n[\"c\", \"d\"]}\n}";
+        String mg = "{\n" +
+                "\"a\": {\"type\": \"input\", \"shape\": [1,1]},\n" +
+                "\"b\": {\"type\": \"input\", \"shape\": [1,1]},\n" +
+                "\"c\": {\"type\": \"comp\", \"op\": \"sum\", \"in\": [\"a\", \"b\"]}, \n" +
+                "\"d\": {\"type\": \"comp\", \"op\": \"sum\", \"in\": [\"b\", [[1]]]}, \n" +
+                "\"e\": {\"type\": \"comp\", \"op\": \"mult\", \"in\": [\"c\", \"d\"]}, \n" +
+                "\"f\": {\"type\": \"input\", \"shape\": [2, 2]},\n"+
+                "\"g\": {\"type\": \"input\", \"shape\": [2, 2]},\n"+
+                "\"h\": {\"type\": \"comp\", \"op\": \"sum\", \"in\": [\"f\", \"g\"]}, \n" +
+                "\"y\": {\"type\": \"comp\", \"op\": \"mult\", \"in\": [\"f\", \"g\"]} \n" +
+                "}";
+        System.out.println(mg);
         Parser p = new Parser(mg);
         //p.printToken();
         p.parseGraph();
         System.out.println(p.g.isDAG());
         System.out.println(p.g.isValid());
 
-        Generator print = new Generator();
+        GeneratorT print = new GeneratorT();
         print.generateCode(p.g);
     }
 

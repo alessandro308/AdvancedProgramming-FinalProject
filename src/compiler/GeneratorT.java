@@ -21,14 +21,17 @@ public class GeneratorT {
     }
 
     public String sumString(String output, Graph g, Vector<Input> vars){
+        /* Crea le operazioni per effettuare la somma dato il nome dell'output e il vettore degli input */
         StringBuilder tmp = new StringBuilder();
         if(vars.get(0).getShape() == null) vars.get(0).setShape(g.getNode(vars.get(0).id).getShape());
         if(vars.get(1).getShape() == null) vars.get(1).setShape(g.getNode(vars.get(1).id).getShape());
         for(int i = 0; i<vars.get(0).getShape().c; i++)
             for(int j = 0; j<vars.get(0).getShape().r; j++){
                 tmp.append("\t"+output+"["+i+"]["+j+"]=");
-                tmp.append(vars.get(0).getType() == 0 ? vars.get(0).id+"["+i+"]["+j+"]+" : vars.get(0).matrix().get(i).get(j)+"+");
-                tmp.append(vars.get(1).getType() == 0 ? vars.get(1).id+"["+i+"]["+j+"]" : vars.get(1).matrix().get(i).get(j));
+                for(int n = 0; n<vars.size(); n++) {
+                    tmp.append(vars.get(n).getType() == 0 ? vars.get(n).id + "[" + i + "][" + j + "]" : vars.get(n).matrix().get(i).get(j));
+                    if(n < vars.size() -1) tmp.append("+");
+                }
                 tmp.append(";\n");
             }
         return tmp.toString();
@@ -36,6 +39,10 @@ public class GeneratorT {
 
 
     public String mulString(String output, Graph g, Vector<Input> vars){
+        /* Crea le operazioni per effettuare la mult dato il nome dell'output e il vettore degli input
+        * La moltiplicazione, data la complessità, può essere effettuata solo due input alla volta.
+        * Gli input in eccesso saranno ignorati.
+        * */
         StringBuilder tmp = new StringBuilder();
         if(vars.get(0).getShape() == null) vars.get(0).setShape(g.getNode(vars.get(0).id).getShape());
         if(vars.get(1).getShape() == null) vars.get(1).setShape(g.getNode(vars.get(1).id).getShape());

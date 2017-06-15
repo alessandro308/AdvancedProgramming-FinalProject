@@ -6,14 +6,6 @@ import graph.exception.ShapeCompatibilityException;
 
 import java.util.Vector;
 
-/**
- * A computational graph formalism like the one used by Machine Learning libraries such as Theano or TensorFlow. A
- * computational graph consists of nodes and edges. There are two kinds of nodes:
- *      1. Input nodes, which are placeholders for input data.
- *      2. Computational nodes, which take values from nodes on the incoming edges and compute a function on those values.
- * Edges connect nodes forming a Directed Acyclic Graph (DAG). The computation expressed by a graph is compiled into
- * executable code in a target language that gets data from inputs and performs the operations expressed in the graph.
- */
 public class Graph {
     private Vector<Node> nodes = new Vector<>();
     private Vector<Edge> edges = new Vector<>();
@@ -29,6 +21,7 @@ public class Graph {
         return (Vector<Node>) nodes.clone();
     }
     public Vector<Node> getInitial(){
+        /* Restituisce l'insieme dei nodi che non hanno archi entranti */
         Vector<Node> init = new Vector<>();
         for(Node n : nodes){
             if(n.isInitial())
@@ -39,6 +32,7 @@ public class Graph {
 
     //------------------ISDAG() HANDLERS------------------
     private Vector<Edge> filterEdge(Vector<Edge> edges, String start, String end){
+        /*Restituisce gli archi di edges, filtrandoli secondo i parametri start ed end, eventualmente null*/
         Vector<Edge> res = new Vector<>();
         if(start == null && end == null){
             return null;
@@ -62,8 +56,9 @@ public class Graph {
         return res.size() == 0 ? null : res;
     }
     public Vector<String> getOrderNodes(){
-        System.out.println(this.getNode("d").getInputs().get(1).shape.r);
-        /* Kahn's algorithm // https://en.wikipedia.org/wiki/Topological_sorting */
+        /* Restituisce i nodi ordinati topologicamente.
+         * L'algoritmo usato è il Kahn's algorithm // https://en.wikipedia.org/wiki/Topological_sorting
+         * */
         Vector<String> L = new Vector<>();
         Vector<String> S = new Vector<>();
         Vector<Edge> edges2 = (Vector<Edge>) this.edges.clone();
@@ -82,10 +77,14 @@ public class Graph {
                         S.add(e.end);
                 }
         }
+        for(Edge e : edges2){
+            System.out.println("ARCO: "+e.start+" "+e.end);
+        }
         return edges2.size() <= 0 ? L : null;
     }
 
-    public Vector<Node> orderNodes() throws NotADAGException{ //Edit nodes with results of Kahn's algorithm
+    public Vector<Node> orderNodes() throws NotADAGException{
+        //Edit this.nodes with results of Kahn's algorithm
         Vector<String> orderedNodesID = getOrderNodes();
         if(orderedNodesID == null || this.nodes.size() != orderedNodesID.size())
             throw new NotADAGException();
@@ -97,6 +96,8 @@ public class Graph {
     }
 
     public boolean isDAG(){
+        /* If the graph is a DAG, a solution will be contained in the list L (the solution is not necessarily unique).
+         Otherwise, the graph must have at least one cycle and therefore a topological sorting is impossible. */
         return getOrderNodes() != null;
     }
 
@@ -140,16 +141,14 @@ public class Graph {
     }
 
     public boolean isValid(){
-        for(Node n : nodes){
-            if(!n.isInitial()){
-                for(Input input : n.getInputs()){
+        /* Compute the shape compatibility of inputs and the correct node input id*/
+        for(Node n : nodes)
+            if(!n.isInitial())
+                for(Input input : n.getInputs())
                     if(input.getType() == 0 && getNode(input.id) == null) {
                         System.out.println("Node " + input.id + " not exists");
                         return false;
                     }
-                }
-            }
-        }
         try{
             for(Node n: sink()){
                 computingShape(new Input(n.getId()));
@@ -171,6 +170,7 @@ public class Graph {
     }
 
     public void createEdge(){
+        /* Compute the edges given the nodes and their inputs */
         for(Node n : nodes){
             if(!n.isInitial()){
                 for(Input in : n.getInputs()){
@@ -182,7 +182,7 @@ public class Graph {
     }
 
     public Vector<Node> sink(){
-        //returns first sink found
+        //return all nodes that has no outcoming edges
         Vector<Node> nodes = (Vector<Node>) this.nodes.clone();
         for(Node no : this.nodes){
             if(!no.isInitial()){
@@ -192,6 +192,68 @@ public class Graph {
             }
         }
         return nodes.size() == 0 ? null : nodes;
+    }
+
+    private int countEdge(String start, String end){
+        int res = 0;
+        for(Edge e : this.edges){
+            if(start != null && end != null && e.end.equals(end) && e.start.equals(start))
+                res++;
+            if(start == null && end != null && e.end.equals(end))
+                res++;
+            if(end == null && start != null && e.start.equals(start))
+                res++;
+            if(start == null && end == null)
+                res++;
+        }
+        return res;
+    }
+    private void removeEdge(String start, String end){
+        Vector<Edge> toRemove = new Vector<>();
+        for(Edge e:this.edges){
+            if(e.start.equals(start) && e.end.equals(end))
+                toRemove.add(e);
+        }
+        this.edges.removeAll(toRemove);
+    }
+
+    private void optimize(Node n) {
+        if (n.isOptimized()) return;
+        Vector<Input> toAdd = new Vector<>();
+        Vector<Input> merged = new Vector<>();
+        for (Input in : n.getInputs()) {
+            if (in.getType() == 0) {
+                optimize(this.getNode(in.id));
+                if (countEdge(in.id, null) == 1 // if il risultato non serve ad altri nodi
+                        && !this.getNode(in.id).isInitial() // Se non è un nodo di input
+                        && this.getNode(in.id).getOp().equals("sum") && n.getOp().equals("sum")) { // Sono entrambe somme
+                    for (Edge e : this.edges) { // Aggiorno archi
+                        if (e.end.equals(in.id))
+                            e.end = n.getId();
+                    }
+                    toAdd = this.getNode(in.id).getInputs(); //Prendo input del nodo unificato
+                    merged.add(in);
+                }
+            }
+        }
+        /* Modifico grafo dato il merge appena effettuato */
+        n.addInputs(toAdd);
+        n.getInputs().removeAll(merged);
+        for(Input in : merged) {
+            this.nodes.remove(this.getNode(in.id));
+            removeEdge(in.id, n.getId());
+        }
+        n.setOptimized(); // Imposto il nodo come ottimizzato
+    }
+    public void optimizedGraph(){
+        /* Richiama la funzione di ottimizzazione su ogni nodo finale*/
+        for(Node n : this.getInitial()){
+            n.setOptimized();
+        }
+        Vector<Node> sink = this.sink();
+        for(int i = 0; i<sink.size(); i++){
+            optimize(sink.get(i));
+        }
     }
 
 }

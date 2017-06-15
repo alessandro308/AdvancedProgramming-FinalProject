@@ -91,6 +91,7 @@ public class Parser {
     }
 
     private Vector<Input> readIn() throws IOException, UnexpectedTokenException{
+        /* Legge il campo input del JSON */
         Vector<Input> inputs = new Vector<>();
         expect('[');
         input.nextToken();
@@ -118,6 +119,7 @@ public class Parser {
     }
 
     private void parseNode(){
+        /* Parsa la struttura nodo del JSON */
         String id = null;
         int type = -1;
         Vector<Input> in = new Vector<>();
@@ -168,6 +170,11 @@ public class Parser {
     }
 
     public void parseGraph() throws UnexpectedTokenException, IOException {
+        /*
+            I nodi con la moltiplicazione, seppur correttamente parsati, nel caso avessero più di 2 input,
+            quelli in eccesso non saranno considerati nel generatore. Questo perchè diventava complesso fare più
+            moltiplicazioni di matrici in un single nested loop.
+         */
         expect('{');
         parseNode();
         input.nextToken();
@@ -192,8 +199,10 @@ public class Parser {
                 "\"e\": {\"type\": \"comp\", \"op\": \"mult\", \"in\": [\"c\", \"d\"]}, \n" +
                 "\"f\": {\"type\": \"input\", \"shape\": [2, 2]},\n"+
                 "\"g\": {\"type\": \"input\", \"shape\": [2, 2]},\n"+
-                "\"h\": {\"type\": \"comp\", \"op\": \"sum\", \"in\": [\"f\", \"g\"]}, \n" +
-                "\"y\": {\"type\": \"comp\", \"op\": \"mult\", \"in\": [\"f\", \"g\"]} \n" +
+                "\"x1\": {\"type\": \"input\", \"shape\": [2, 2]},\n"+
+                "\"h\": {\"type\": \"comp\", \"op\": \"sum\", \"in\": [\"f\", \"g\", \"x1\"]}, \n" +
+                "\"y\": {\"type\": \"comp\", \"op\": \"mult\", \"in\": [\"f\", \"g\"]}, \n" +
+                "\"t\": {\"type\": \"comp\", \"op\": \"sum\", \"in\": [\"h\", [[2,3],[2,3]]]} \n" +
                 "}";
         System.out.println(mg);
         Parser p = new Parser(mg);
@@ -201,7 +210,7 @@ public class Parser {
         p.parseGraph();
         System.out.println(p.g.isDAG());
         System.out.println(p.g.isValid());
-
+        p.g.optimizedGraph();
         GeneratorT print = new GeneratorT();
         print.generateCode(p.g);
     }

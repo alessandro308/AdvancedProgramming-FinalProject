@@ -9,12 +9,6 @@ public class Node {
     private Vector<Input> inputs;
     private String op;
     private boolean isOptimized = false;
-    public Node(String id, int row, int col){
-        this.id = id;
-        this.shape.r = row;
-        this.shape.c = col;
-        this.isInitial=true;
-    }
     public Node(String id, Shape shape){
         this.id = id;
         this.shape = shape;
@@ -25,6 +19,7 @@ public class Node {
         this.op = op;
         this.inputs = inputs;
     }
+
     public String getId(){
         return this.id;
     }

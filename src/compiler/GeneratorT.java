@@ -5,9 +5,6 @@ import graph.*;
 import java.io.*;
 import java.util.Vector;
 
-/**
- * Created by alessandro on 13/06/17.
- */
 public class GeneratorT {
     OutputStream file;
 

@@ -206,7 +206,6 @@ public class Parser {
                 "}";
         System.out.println(mg);
         Parser p = new Parser(mg);
-        //p.printToken();
         p.parseGraph();
         System.out.println(p.g.isDAG());
         System.out.println(p.g.isValid());

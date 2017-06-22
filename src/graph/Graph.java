@@ -1,10 +1,7 @@
 package graph;
 
 import compiler.exception.NotADAGException;
-import graph.exception.NodeAlreadyExistsException;
-import graph.exception.ShapeCompatibilityException;
-
-import java.util.HashMap;
+import graph.exception.*;
 import java.util.Vector;
 
 public class Graph {

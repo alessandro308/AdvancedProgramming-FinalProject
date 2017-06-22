@@ -10,15 +10,13 @@ public class Shape {
         this.r = r;
         this.c = c;
     }
-
-    public boolean equals(Object other){
-            return (other instanceof Shape) &&
-                    ((Shape) other).r == this.r &&
-                    ((Shape) other).c == this.c;
-    }
-
     public int size(){
         return r*c;
+    }
+    public boolean equals(Object other){
+        return (other instanceof Shape) &&
+                ((Shape) other).r == this.r &&
+                ((Shape) other).c == this.c;
     }
 
 }

@@ -204,8 +204,9 @@ public class Parser {
                 "\"y\": {\"type\": \"comp\", \"op\": \"mult\", \"in\": [\"f\", \"g\"]}, \n" +
                 "\"t\": {\"type\": \"comp\", \"op\": \"sum\", \"in\": [\"h\", [[2,3],[2,3]]]} \n" +
                 "}";
-        System.out.println(mg);
-        Parser p = new Parser(mg);
+        String mg2 = "{\n" + "\"a\": {\"type\": \"input\", \"shape\": [1,1]},\n" + "\"b\": {\"type\": \"input\", \"shape\": [1,1]},\n" + "\"c\": {\"type\": \"comp\", \"op\": \"sum\", \"in\": [\"a\", \"b\"]}, \"d\": {\"type\": \"comp\", \"op\": \"sum\", \"in\": [\"b\", [[1]]]}, \"e\": {\"type\": \"comp\", \"op\": \"mult\", \"in\": [\"c\", \"d\"]}\n" + "}";
+        System.out.println(mg2);
+        Parser p = new Parser(mg2);
         p.parseGraph();
         System.out.println(p.g.isDAG());
         System.out.println(p.g.isValid());
@@ -213,5 +214,4 @@ public class Parser {
         GeneratorT print = new GeneratorT();
         print.generateCode(p.g);
     }
-
 }

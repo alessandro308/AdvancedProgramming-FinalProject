@@ -94,10 +94,11 @@ public class GeneratorT {
                 case "mult":
                     toWrite.append(mulString(n.getId(), g, n.getInputs()));
             }
-            toWrite.append("\tres.add("+n.getId()+");\n\n");
+            if(g.sink().contains(n))
+                toWrite.append("\tres.add("+n.getId()+");\n\n");
+            else toWrite.append("\n");
         }
         toWrite.append("\treturn res;\n}");
         file.write(toWrite.toString().getBytes());
-
     }
 }
